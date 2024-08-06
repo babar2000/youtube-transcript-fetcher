@@ -13,3 +13,17 @@ To use this script, you need to install the `youtube-transcript-api` package. Yo
 
 ```bash
 pip install youtube-transcript-api
+
+## Contributing
+
+If you want to contribute to this project, follow these steps:
+
+1. Fork the repository.
+2. Create a new branch with your feature or bug fix.
+3. Commit your changes.
+4. Push to the branch.
+5. Create a pull request.
+
+## License
+
+This project is licensed under the MIT License.
