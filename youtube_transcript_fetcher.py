@@ -24,11 +24,27 @@ def list_available_transcripts(video_id):
 def get_transcript(video_id, language_code):
     transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[language_code])
     text = ""
-    for t in transcript:
+    srt = ""
+    for index, t in enumerate(transcript):
         text += t['text'] + ' '
-    return text
+        start = int(t['start'])
+        duration = int(t['duration'])
+        hours, minutes, seconds = start // 3600, (start % 3600) // 60, start % 60
+        end_hours, end_minutes, end_seconds = (start + duration) // 3600, ((start + duration) % 3600) // 60, (start + duration) % 60
+        srt += f"{index + 1}\n{hours:02}:{minutes:02}:{seconds:02},000 --> {end_hours:02}:{end_minutes:02}:{end_seconds:02},000\n{t['text']}\n\n"
+    return text, srt
 
-video_id = "PUT_YOUR_VIDEO_ID_HERE"  # Video ID
+def save_to_file(text, srt, filename):
+    with open(f"{filename}.txt", "w", encoding="utf-8") as txt_file:
+        txt_file.write(text)
+    with open(f"{filename}.srt", "w", encoding="utf-8") as srt_file:
+        srt_file.write(srt)
+
+# Video ID is the code at the end of your video
+# For example for if your video is https://www.youtube.com/watch?v=7F_GcVO8YMg
+# then YOUR_VIDEO_ID is 7F_GcVO8YMg
+
+video_id = "YOUR_VIDEO_ID"  
 transcripts = list_available_transcripts(video_id)
 
 # Print available transcripts
@@ -40,9 +56,13 @@ for transcript in transcripts:
 if transcripts:
     selected_transcript = transcripts[0]
     try:
-        transcript_text = get_transcript(video_id, selected_transcript['language_code'])
+        transcript_text, transcript_srt = get_transcript(video_id, selected_transcript['language_code'])
         print(f"\nTranscript in {selected_transcript['language']} ({selected_transcript['type']}):")
         print(transcript_text)
+
+        # Save transcript to files
+        save_to_file(transcript_text, transcript_srt, f"transcript_{video_id}")
+        print(f"\nTranscript saved to transcript_{video_id}.txt and transcript_{video_id}.srt")
     except Exception as e:
         print(f"Error: {e}")
 else:
