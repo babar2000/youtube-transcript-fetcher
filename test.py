@@ -59,6 +59,7 @@ if english_transcript:
     
     if error:
         print(error)
+        
     else:
         print(f"\nTranscript in English ({english_transcript['type']}):")
         print(transcript_text)
